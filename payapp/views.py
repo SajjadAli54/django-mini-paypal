@@ -118,3 +118,35 @@ def reject_request(request: HttpRequest) -> HttpResponse:
     payment_req.is_completed = True
     payment_req.save()
     return redirect('home')
+
+@transaction.atomic
+def accept_request(request: HttpRequest)-> HttpResponse:
+    pk = request.GET.get("pk")
+    payment_req = PaymentRequest.objects.filter(pk=pk).first()
+    req_sender = payment_req.req_sender
+    req_recipient = payment_req.req_recipient
+    amount = payment_req.amount
+    base_currency = payment_req.currency
+    target_currency = req_sender.currency
+    
+    url = f"http://{request.get_host()}/payapp/convert/?"
+    params = {'base_currency': base_currency, 
+        'target_currency': target_currency, 
+        'amount': amount}
+    response = requests.get(url, params)
+    converted_amount = response.json()['converted_amount']
+    if converted_amount <= req_recipient.balance:
+        req_recipient.balance -= Decimal(str(converted_amount))
+        req_sender.balance += amount
+        payment = Transaction.objects.create(sender=req_recipient, 
+                                             recipient=req_sender, 
+                                             amount=converted_amount, 
+                                             currency=target_currency)
+        req_sender.save()
+        req_recipient.save()
+        payment.save()
+        payment_req.status = "ACCEPTED"
+        payment_req.is_completed = True
+        payment_req.save()
+        return redirect('home')
+    return redirect('home', 'Not enough money!')
