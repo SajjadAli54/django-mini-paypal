@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django-debug-toolbar = "*"
+forex-python = "*"
+requests = "*"
+djangorestframework = "*"
+install = "*"
+channels = {extras = ["daphne"], version = "*"}
+celery = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
