@@ -50,7 +50,10 @@
                                 <li class="list-group-item mt-2 bg-red-100">
                                     <h3>{{ payment_request.req_sender.email }}</h3>
                                     <p>Received Requested -{{ payment_request.amount }} {{ payment_request.currency }}</p>
-                                    <span class="badge bg-blue-400">{{ payment_request.get_status }}</span>
+                                    <span class="badge bg-blue-400">{{ payment_request.status }}</span>
+                                    <div class="d-flex">
+                                        <a class="text-blue-400" href="{% url 'reject' %}?pk={{ payment_request.pk  | urlencode }}">Reject</a>
+                                    </div>
                                 </li>
                                 {% endif %}
     

@@ -21,7 +21,7 @@ def index(request: HttpRequest) -> HttpResponse:
         payment_requests = list(
             PaymentRequest.objects.filter(
                 Q(req_sender=user) | Q(req_recipient=user)
-            ).filter(is_completed=False).order_by('-timestamp').all()
+            ).order_by('-timestamp').all()
         )
         return render(request, "pages/index.html", 
                       {'user': user, 

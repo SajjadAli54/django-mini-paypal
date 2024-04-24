@@ -112,4 +112,9 @@ def request_payment(request: HttpRequest) -> HttpResponse:
 
 @transaction.atomic
 def reject_request(request: HttpRequest) -> HttpResponse:
-    pass
+    pk = request.GET.get("pk")
+    payment_req = PaymentRequest.objects.filter(pk=pk).first()
+    payment_req.status = "REJECTED"
+    payment_req.is_completed = True
+    payment_req.save()
+    return redirect('home')
