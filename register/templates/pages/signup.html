@@ -3,8 +3,11 @@
 {% block page_content %}
 
 
-<div class="row justify-content-center">
+<div class="row justify-content-center m-3">
   <div class="col-md-6">
+    {% block error %}
+        {% include 'show_error.html' %}
+    {% endblock %}
       <div class="card">
           <div class="card-header">
               <h1 class="text-center">Signup Form</h1>
@@ -22,14 +25,5 @@
       </div>
   </div>
 </div>
-
-{% if form.errors %}
-    <div class="alert alert-danger" role="alert">
-        {% for field, errors in form.errors.items %}
-            {{ field|title }}: {{ errors|join:', ' }}
-        {% endfor %}
-    </div>
-{% endif %}
-
 
 {% endblock page_content %}

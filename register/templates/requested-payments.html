@@ -8,7 +8,7 @@
             {% if payment_request.req_sender.email == user.email %}
             <li class="list-group-item mt-2 bg-green-100">
                 <h3>{{ payment_request.req_recipient.email }}</h3>
-                <p>Requested Amount +{{ payment_request.amount }} {{ payment_request.currency }}</p>
+                <span class="badge bg-dark">+{{ payment_request.amount }} {{ payment_request.currency }}</span>
                 {% block time1 %}
                     {% include 'date_time.html' with time=payment_request.updated_at %}
                 {% endblock %}
@@ -29,7 +29,7 @@
             {% else %}
             <li class="list-group-item mt-2 bg-red-100">
                 <h3>{{ payment_request.req_sender.email }}</h3>
-                <p>Received Requested -{{ payment_request.amount }} {{ payment_request.currency }}</p>
+                <span class="badge bg-dark"> -{{ payment_request.amount }} {{ payment_request.currency }}</span>
 
                 {% block time2 %}
                     {% include 'date_time.html' with time=payment_request.updated_at %}

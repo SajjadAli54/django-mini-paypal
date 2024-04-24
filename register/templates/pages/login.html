@@ -2,8 +2,12 @@
 
 {% block page_content %}
 
-<div class="row justify-content-center">
+
+<div class="row justify-content-center m-3">
   <div class="col-md-6">
+        {% block error %}
+            {% include 'show_error.html' %}
+        {% endblock %}
       <div class="card">
           <div class="card-header">
               <h1 class="text-center">Login Form</h1>

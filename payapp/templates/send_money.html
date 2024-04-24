@@ -10,6 +10,11 @@
         {% endblock %}
         </div>
 
+        {% block error %}
+            {% include 'show_error.html' %}
+        {% endblock %}
+
+
         <div class="card-body offset-md-3">
             <h1 class="text-center mb-4">Send Money</h1>
             <form method="post" class="needs-validation" novalidate>

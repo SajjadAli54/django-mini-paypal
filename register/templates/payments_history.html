@@ -8,9 +8,9 @@
     {% if transaction.sender.email == user.email %}
     <li class="list-group-item mt-2 bg-red-100">
       <h3>{{ transaction.recipient.email }}</h3>
-      <p>
-        Transfer Complete -{{ transaction.amount }} {{ transaction.currency }}
-      </p>
+      <span class="badge bg-dark">
+        -{{ transaction.amount }} {{ transaction.currency }}
+      </span>
       {% block time1 %}
         {% include 'date_time.html' with time=transaction.timestamp %}
       {% endblock %}
@@ -18,7 +18,7 @@
     {% else %}
     <li class="list-group-item mt-2 bg-green-100">
       <h3>{{ transaction.sender.email }}</h3>
-      <p>Received +{{ transaction.amount }} {{ transaction.currency }}</p>
+      <span class="badge bg-dark"> +{{ transaction.amount }} {{ transaction.currency }}</span>
       {% block time2 %}
         {% include 'date_time.html' with time=transaction.timestamp %}
       {% endblock %}

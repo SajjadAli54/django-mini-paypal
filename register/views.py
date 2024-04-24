@@ -4,12 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
-from django.core.cache import cache
-
-import requests
 
 from payapp.models import PaymentRequest, Transaction
 from register.models import AccountHolder
+from webapps2024.helper import get_converted_amount
 
 from .forms import SignupForm, LoginForm
 
@@ -54,15 +52,11 @@ def user_signup(request):
         if form.is_valid():
             holder = form.save(commit=False)
             currency = form.cleaned_data['currency']
-            url = f"http://{request.get_host()}/payapp/convert/?"
-            params = {'base_currency': 'EUR', 'target_currency': currency, 'amount': 1000}
-            response = requests.get(url, params)
-            if response.status_code == 200:
-                converted_amount = response.json()['converted_amount']
-                holder.balance = converted_amount
-                holder.save()
-                add_user_auth(form)
-                return redirect('login')
+            converted_amount = get_converted_amount(request, 'EUR', currency, 1000)
+            holder.balance = converted_amount
+            holder.save()
+            add_user_auth(form)
+            return redirect('login')
     else:
         form = SignupForm()
     return render(request, page, {'form': form})
@@ -77,7 +71,6 @@ def user_login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:             
-                cache.set('user', user.email)
                 login(request, user)
                 return redirect('home')
     else:
@@ -87,5 +80,4 @@ def user_login(request):
 # logout page
 def user_logout(request):
     logout(request)
-    cache.delete('user')
     return redirect('login')
