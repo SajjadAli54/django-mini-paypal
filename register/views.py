@@ -8,7 +8,7 @@ from django.core.cache import cache
 
 import requests
 
-from payapp.models import Transaction
+from payapp.models import PaymentRequest, Transaction
 from register.models import AccountHolder
 
 from .forms import SignupForm, LoginForm
@@ -18,9 +18,15 @@ def index(request: HttpRequest) -> HttpResponse:
         email = request.user.email
         user = AccountHolder.objects.filter(email=email).first()
         payments = list(Transaction.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-timestamp').all())
+        payment_requests = list(
+            PaymentRequest.objects.filter(
+                Q(req_sender=user) | Q(req_recipient=user)
+            ).filter(is_completed=False).order_by('-timestamp').all()
+        )
         return render(request, "pages/index.html", 
                       {'user': user, 
-                       'payments': payments, 
+                       'payments': payments,
+                       'payment_requests': payment_requests
                     })
                        
     return redirect('login')

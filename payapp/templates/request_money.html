@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+
+<div class="row m-5">
+    <div class="card">
+        <div class="card-header">
+        {% block bar %}
+            {% include "links.html" %}
+        {% endblock %}
+        </div>
+
+        <div class="card-body offset-md-3">
+            <h1 class="text-center mb-4">Request Money</h1>
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <table class="table">
+                    {{ form.as_table }}
+                </table>        
+                <button type="submit" class="btn btn-primary btn-block">Request</button>
+            </form>
+            {% if error %}
+                <p class="text-danger mt-3">{{ error }}</p>
+            {% endif %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+            {% for field, errors in form.errors.items %}
+                {{ field|title }}: {{ errors|join:', ' }}
+            {% endfor %}
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

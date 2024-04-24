@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.shortcuts import redirect, render
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.db import transaction
 from django.core.cache import cache
 
@@ -9,7 +9,7 @@ import requests
 from rest_framework.status import HTTP_200_OK
 from rest_framework.decorators import api_view
 
-from payapp.forms import SendMoneyForm
+from payapp.forms import *
 from register.models import AccountHolder
 from .convert import get_exchange_rate
 
@@ -32,8 +32,9 @@ def send_money(request: HttpRequest):
     if request.method == 'POST':
         form = SendMoneyForm(request.POST)
         if form.is_valid():
-            email = cache.get('user')
-            if email is None:
+            # email = cache.get('user')
+            email = request.user.email
+            if not email:
                 return render(request, "send_money.html", {'form': form, 'error': 'You are logged out!'})
 
             sender = AccountHolder.objects.filter(email=email).first()
@@ -71,3 +72,44 @@ def send_money(request: HttpRequest):
     else:
         form = SendMoneyForm()
     return render(request, "send_money.html", {'form': form})
+
+@transaction.atomic
+def request_payment(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        form = PaymentRequestForm(request.POST)
+        if form.is_valid():
+            email = request.user.email
+            if not email:
+                return render(
+                    request, 
+                    "request_money.html", 
+                    {
+                        'form': form, 
+                        'error': 'You are logged out!'
+                        })
+
+            sender = AccountHolder.objects.filter(email=email).first()
+            recipient = form.cleaned_data['req_recipient']
+
+            if email == recipient.email:
+                return render(
+                    request, 
+                    "request_money.html", 
+                    {
+                        'form': form, 
+                        'error': 'You cannot request money from yourself!'
+                    })
+          
+            payment: PaymentRequest = form.save(commit=False)
+            payment.req_sender = sender
+            payment.save()
+            return redirect('home')
+        else:
+            return render(request, "request_money.html", {'form': form})
+    else:
+        form = PaymentRequestForm()
+    return render(request, "request_money.html", {'form': form})
+
+@transaction.atomic
+def reject_request(request: HttpRequest) -> HttpResponse:
+    pass
