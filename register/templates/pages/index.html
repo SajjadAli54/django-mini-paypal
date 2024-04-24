@@ -44,7 +44,10 @@
                                 <li class="list-group-item mt-2 bg-green-100">
                                     <h3>{{ payment_request.req_recipient.email }}</h3>
                                     <p>Requested Amount +{{ payment_request.amount }} {{ payment_request.currency }}</p>
-                                    <span class="badge bg-blue-400">{{ payment_request.status }}</span>
+                                    <span class="badge bg-purple-600 text-light">{{ payment_request.updated_at }}</span>
+                                    {% block status1 %}
+                                        {% include "status.html" with status=payment_request.status %}
+                                    {% endblock %}
                                     {% if payment_request.status == "REJECTED" %}
                                     <div class="d-flex justify-around">
                                         <a class="badge text-green-700 bg-light" href="{% url 'renew' %}?pk={{ payment_request.pk  | urlencode }}">Renew Request</a>
@@ -55,11 +58,14 @@
                                 <li class="list-group-item mt-2 bg-red-100">
                                     <h3>{{ payment_request.req_sender.email }}</h3>
                                     <p>Received Requested -{{ payment_request.amount }} {{ payment_request.currency }}</p>
-                                    <span class="badge bg-blue-400">{{ payment_request.status }}</span>
+                                    <span class="badge bg-purple-600 text-light">{{ payment_request.updated_at }}</span>
+                                    {% block status2 %}
+                                        {% include "status.html" with status=payment_request.status %}
+                                    {% endblock %}
                                     {% if payment_request.is_completed == False %}
-                                    <div class="d-flex justify-around">
-                                        <a class="badge text-blue-700 bg-light" href="{% url 'reject' %}?pk={{ payment_request.pk  | urlencode }}">Reject</a>
-                                        <a class="badge text-green-700 bg-light" href="{% url 'accept' %}?pk={{ payment_request.pk  | urlencode }}">Accept</a>
+                                    <div class="d-flex justify-around mt-3">
+                                        <a class="badge text-blue-700 bg-light" href="{% url 'reject' %}?pk={{ payment_request.pk  | urlencode }}">REJECT</a>
+                                        <a class="badge text-green-700 bg-light" href="{% url 'accept' %}?pk={{ payment_request.pk  | urlencode }}">ACCEPT</a>
                                     </div>
                                     {% endif %}
                                 </li>
