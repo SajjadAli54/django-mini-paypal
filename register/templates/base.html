@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,7 +16,27 @@
     />
   </head>
   <body>
-    <body class="container">
+    <body class="container mx-auto">
+      <header class="py-4 px-8 bg-blue-500 text-white">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <h1 class="text-lg font-semibold">Mini Paypal</h1>
+          </div>
+          <nav>
+            <div class="flex space-x-12">
+              <ul class="flex space-x-4">
+                <li><a href="{% url 'home' %}" class="hover:text-gray-300">Home</a></li>
+                <li><a href="{% url 'send_money' %}" class="hover:text-gray-300">Send Money</a></li>
+                <li><a href="{% url 'request' %}" class="hover:text-gray-300">Request Money</a></li>
+              </ul>
+              <ul class="flex space-x-4">
+                <li><a href="{% url 'login' %}" class="hover:text-gray-300">Login</a></li>
+                <li><a href="{% url 'logout' %}" class="hover:text-gray-300">Logout</a></li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </header>
       {% block page_content %}{% endblock page_content %}
     </body>
 

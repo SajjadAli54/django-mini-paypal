@@ -3,14 +3,9 @@
 
 {% block page_content %} 
 
-<div class="row">
+<div class="row m-2">
         {% if user %}
         <div class="card mt-5">
-            <div class="card-header">
-                {% block bar %}
-                   {% include "links.html" %}
-                {% endblock %}
-            </div>
             {% if form.errors %}
             <div class="alert alert-danger" role="alert">
                 {% for field, errors in form.errors.items %}
@@ -24,70 +19,20 @@
                     {%block details %}
                         {% include 'user-details.html' with user=user %}
                     {% endblock %}
-                    <div class="card col-md-5 col-sm-12 m-3">
-                        <div class="card-header">
-                            <h3 class="text-center">Requested Payments</h3>
-                        </div>
-                        <div class="card-body mt-4">
-                            <ul class="list-group">
-                                {% for payment_request in payment_requests %}
-                                {% if payment_request.req_sender.email == user.email %}
-                                <li class="list-group-item mt-2 bg-green-100">
-                                    <h3>{{ payment_request.req_recipient.email }}</h3>
-                                    <p>Requested Amount +{{ payment_request.amount }} {{ payment_request.currency }}</p>
-                                    <span class="badge bg-purple-600 text-light">{{ payment_request.updated_at }}</span>
-                                    {% block status1 %}
-                                        {% include "status.html" with status=payment_request.status %}
-                                    {% endblock %}
-                                    {% if payment_request.status == "REJECTED" %}
-                                    <div class="d-flex justify-around">
-                                        <a class="badge text-green-700 bg-light" href="{% url 'renew' %}?pk={{ payment_request.pk  | urlencode }}">Renew Request</a>
-                                    </div>
-                                    {% endif %}
-                                </li>
-                                {% else %}
-                                <li class="list-group-item mt-2 bg-red-100">
-                                    <h3>{{ payment_request.req_sender.email }}</h3>
-                                    <p>Received Requested -{{ payment_request.amount }} {{ payment_request.currency }}</p>
-                                    <span class="badge bg-purple-600 text-light">{{ payment_request.updated_at }}</span>
-                                    {% block status2 %}
-                                        {% include "status.html" with status=payment_request.status %}
-                                    {% endblock %}
-                                    {% if payment_request.is_completed == False %}
-                                    <div class="d-flex justify-around mt-3">
-                                        <a class="badge text-blue-700 bg-light" href="{% url 'reject' %}?pk={{ payment_request.pk  | urlencode }}">REJECT</a>
-                                        <a class="badge text-green-700 bg-light" href="{% url 'accept' %}?pk={{ payment_request.pk  | urlencode }}">ACCEPT</a>
-                                    </div>
-                                    {% endif %}
-                                </li>
-                                {% endif %}
-    
-                            {% endfor %}
-    
-                            </ul>
-                        </div>        
-                    </div>
-                </div>                
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h3 class="text-center">Payments History</h3>
-                    </div>
-                    <ul class="card-body list-group">
-                        {% for transaction in payments %}
-                            {% if transaction.sender.email == user.email %}
-                            <li class="list-group-item mt-2 bg-red-100">
-                                <h3>{{ transaction.recipient.email }}</h3>
-                                <p>Transfer Complete -{{ transaction.amount }} {{ transaction.currency }}</p>
-                            </li>
-                            {% else %}
-                            <li class="list-group-item mt-2 bg-green-100">
-                                <h3>{{ transaction.sender.email }}</h3>
-                                <p>Received +{{ transaction.amount }} {{ transaction.currency }}</p>
-                            </li>
-                            {% endif %}
 
-                        {% endfor %}
-                    </ul>
+                    {% block links %}
+                        {% include "links.html" %}
+                    {% endblock %}
+                </div>
+
+                <div class="row">
+                    {%block payments_history %}
+                        {% include 'payments_history.html' with payments=payments user=user%}
+                    {% endblock %}
+                
+                    {%block requested_payments %}
+                        {% include 'requested-payments.html' with payment_requests=payment_requests user=user%}
+                    {% endblock %}
                 </div>
             </div>
         </div>

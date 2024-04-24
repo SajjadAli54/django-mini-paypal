@@ -1,0 +1,31 @@
+<div class="card col-md-5 col-sm-12 m-3">
+  <div class="card-header">
+    <h3 class="text-center">Payments History</h3>
+  </div>
+  <ul class="card-body list-group">
+    {% for transaction in payments %} 
+
+    {% if transaction.sender.email == user.email %}
+    <li class="list-group-item mt-2 bg-red-100">
+      <h3>{{ transaction.recipient.email }}</h3>
+      <p>
+        Transfer Complete -{{ transaction.amount }} {{ transaction.currency }}
+      </p>
+      {% block time1 %}
+        {% include 'date_time.html' with time=transaction.timestamp %}
+      {% endblock %}
+    </li>
+    {% else %}
+    <li class="list-group-item mt-2 bg-green-100">
+      <h3>{{ transaction.sender.email }}</h3>
+      <p>Received +{{ transaction.amount }} {{ transaction.currency }}</p>
+      {% block time2 %}
+        {% include 'date_time.html' with time=transaction.timestamp %}
+      {% endblock %}
+
+    </li>
+    {% endif %} 
+    
+    {% endfor %}
+  </ul>
+</div>
