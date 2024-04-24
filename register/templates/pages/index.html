@@ -45,6 +45,11 @@
                                     <h3>{{ payment_request.req_recipient.email }}</h3>
                                     <p>Requested Amount +{{ payment_request.amount }} {{ payment_request.currency }}</p>
                                     <span class="badge bg-blue-400">{{ payment_request.status }}</span>
+                                    {% if payment_request.status == "REJECTED" %}
+                                    <div class="d-flex justify-around">
+                                        <a class="badge text-green-700 bg-light" href="{% url 'renew' %}?pk={{ payment_request.pk  | urlencode }}">Renew Request</a>
+                                    </div>
+                                    {% endif %}
                                 </li>
                                 {% else %}
                                 <li class="list-group-item mt-2 bg-red-100">

@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 
 from payapp.forms import *
 from register.models import AccountHolder
+from webapps2024.helper import get_converted_amount
 from .convert import get_exchange_rate
 
 @api_view(['GET'])
@@ -32,7 +33,6 @@ def send_money(request: HttpRequest):
     if request.method == 'POST':
         form = SendMoneyForm(request.POST)
         if form.is_valid():
-            # email = cache.get('user')
             email = request.user.email
             if not email:
                 return render(request, "send_money.html", {'form': form, 'error': 'You are logged out!'})
@@ -50,14 +50,7 @@ def send_money(request: HttpRequest):
             base_currency = sender.currency
             target_currency = recipient.currency
 
-            url = f"http://{request.get_host()}/payapp/convert/?"
-            params = {'base_currency': base_currency, 
-                      'target_currency': target_currency, 
-                      'amount': amount}
-            response = requests.get(url, params)
-            if response.status_code != 200:
-                return render(request, "send_money.html", {'form': form, 'error': 'Error converting currency.'})
-            converted_amount = response.json()['converted_amount']
+            converted_amount = get_converted_amount(request, base_currency, target_currency, amount)
             recipient.balance += Decimal(str(converted_amount))
 
             payment = form.save(commit=False)
@@ -110,6 +103,14 @@ def request_payment(request: HttpRequest) -> HttpResponse:
         form = PaymentRequestForm()
     return render(request, "request_money.html", {'form': form})
 
+def renew_request(request: HttpRequest) -> HttpResponse:
+    pk = request.GET.get("pk")
+    payment_req = PaymentRequest.objects.filter(pk=pk).first()
+    payment_req.status = "PENDING"
+    payment_req.is_completed = False
+    payment_req.save()
+    return redirect('home')
+
 @transaction.atomic
 def reject_request(request: HttpRequest) -> HttpResponse:
     pk = request.GET.get("pk")
@@ -129,12 +130,7 @@ def accept_request(request: HttpRequest)-> HttpResponse:
     base_currency = payment_req.currency
     target_currency = req_sender.currency
     
-    url = f"http://{request.get_host()}/payapp/convert/?"
-    params = {'base_currency': base_currency, 
-        'target_currency': target_currency, 
-        'amount': amount}
-    response = requests.get(url, params)
-    converted_amount = response.json()['converted_amount']
+    converted_amount = get_converted_amount(request, base_currency, target_currency, amount)
     if converted_amount <= req_recipient.balance:
         req_recipient.balance -= Decimal(str(converted_amount))
         req_sender.balance += amount
