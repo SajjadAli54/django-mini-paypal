@@ -21,5 +21,5 @@ urlpatterns = [
     path('', include('register.urls')),
     path('payapp/', include('payapp.urls')),
     path('admin/', admin.site.urls),
-    path("__debug__/", include("debug_toolbar.urls")),
+    path("__debug__/", include("debug_toolbar.urls"))
 ]

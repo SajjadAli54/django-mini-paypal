@@ -8,33 +8,29 @@
             {% if payment_request.req_sender.email == user.email %}
             <li class="list-group-item mt-2 bg-green-100">
                 <h3>{{ payment_request.req_recipient.email }}</h3>
-                <span class="badge bg-dark">+{{ payment_request.amount }} {{ payment_request.currency }}</span>
-                {% block time1 %}
-                    {% include 'date_time.html' with time=payment_request.updated_at %}
+                {% block money1 %}
+                    {% include 'show_money_date.html' with payment_request=payment_request sign="+" %}
                 {% endblock %}
         
-                {% block status1 %}
-                    {% include "status.html" with status=payment_request.status %}
-                {% endblock %}
-                {% if payment_request.status == "REJECTED" %}
-                
-                <a 
-                    class="badge text-light bg-primary" 
-                    href="{% url 'renew' %}?pk={{ payment_request.pk  | urlencode }}">
-                    Renew Request
-                </a>
-                
-                {% endif %}
+                <div class="d-flex justify-between m-2">
+                    {% block status1 %}
+                        {% include "status.html" with status=payment_request.status %}
+                    {% endblock %}
+                    {% if payment_request.status == "REJECTED" %}
+                    <a 
+                        class="badge text-light bg-secondary" 
+                        href="{% url 'renew' %}?pk={{ payment_request.pk  | urlencode }}">
+                        RENEW REQUEST
+                    </a>
+                    {% endif %}
+                </div>
             </li>
             {% else %}
             <li class="list-group-item mt-2 bg-red-100">
                 <h3>{{ payment_request.req_sender.email }}</h3>
-                <span class="badge bg-dark"> -{{ payment_request.amount }} {{ payment_request.currency }}</span>
-
-                {% block time2 %}
-                    {% include 'date_time.html' with time=payment_request.updated_at %}
+                {% block money2 %}
+                    {% include 'show_money_date.html' with payment_request=payment_request sign="-" %}
                 {% endblock %}
-        
 
                 {% block status2 %}
                     {% include "status.html" with status=payment_request.status %}

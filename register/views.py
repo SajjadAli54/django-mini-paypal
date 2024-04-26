@@ -43,6 +43,7 @@ def add_user_auth(form: SignupForm):
         first_name=first_name, 
         last_name=last_name)
     user.save()
+    return user
 
 @transaction.atomic
 def user_signup(request):
@@ -54,8 +55,9 @@ def user_signup(request):
             currency = form.cleaned_data['currency']
             converted_amount = get_converted_amount(request, 'EUR', currency, 1000)
             holder.balance = converted_amount
+            user = add_user_auth(form)
+            holder.password = user.password
             holder.save()
-            add_user_auth(form)
             return redirect('login')
     else:
         form = SignupForm()

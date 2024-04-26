@@ -8,21 +8,16 @@
     {% if transaction.sender.email == user.email %}
     <li class="list-group-item mt-2 bg-red-100">
       <h3>{{ transaction.recipient.email }}</h3>
-      <span class="badge bg-dark">
-        -{{ transaction.amount }} {{ transaction.currency }}
-      </span>
-      {% block time1 %}
-        {% include 'date_time.html' with time=transaction.timestamp %}
+      {% block transaction1 %}
+        {% include 'show_transaction.html' with transaction=transaction sign="-" %}
       {% endblock %}
     </li>
     {% else %}
     <li class="list-group-item mt-2 bg-green-100">
       <h3>{{ transaction.sender.email }}</h3>
-      <span class="badge bg-dark"> +{{ transaction.amount }} {{ transaction.currency }}</span>
-      {% block time2 %}
-        {% include 'date_time.html' with time=transaction.timestamp %}
+      {% block transaction2 %}
+        {% include 'show_transaction.html' with transaction=transaction sign="+" %}
       {% endblock %}
-
     </li>
     {% endif %} 
     
