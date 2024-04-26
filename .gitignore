@@ -1,7 +1,9 @@
 # Ignore compiled Python files
 *.pyc
 __pycache__/
-*/__pycache__/
+register/__pycache__/
+payapp/__pycache__/
+webapps2024/__pycache__/
 
 # Ignore the virtual environment directory
 venv/
