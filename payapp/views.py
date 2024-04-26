@@ -68,7 +68,7 @@ def send_money(request: HttpRequest):
             return redirect('home')        
     else:
         form = SendMoneyForm()
-    return render(request, "send_money.html", {'form': form})
+    return render(request, "pages/send_money.html", {'form': form})
 
 @transaction.atomic
 @api_view(['GET', 'POST'])
@@ -92,11 +92,9 @@ def request_payment(request: HttpRequest) -> HttpResponse:
             payment.req_sender = sender
             payment.save()
             return redirect('home')
-        else:
-            return render(request, "request_money.html", {'form': form})
     else:
         form = PaymentRequestForm()
-    return render(request, "request_money.html", {'form': form})
+    return render(request, "pages/request_money.html", {'form': form})
 
 @api_view(['GET'])
 @transaction.atomic
