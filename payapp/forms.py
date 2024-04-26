@@ -1,15 +1,13 @@
 from django import forms
-
 from payapp.models import PaymentRequest, Transaction
 
-from get_data import get_email
 from register.models import AccountHolder
-
 
 class SendMoneyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        email = kwargs.pop("email", None)
         super().__init__(*args, **kwargs)
-        self.fields['recipient'].queryset = AccountHolder.objects.exclude(email=get_email())
+        self.fields['recipient'].queryset = AccountHolder.objects.exclude(email=email)
     
     class Meta:
         model = Transaction
@@ -17,8 +15,9 @@ class SendMoneyForm(forms.ModelForm):
 
 class PaymentRequestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        email = kwargs.pop("email", None)
         super().__init__(*args, **kwargs)
-        self.fields['req_recipient'].queryset = AccountHolder.objects.exclude(email=get_email())
+        self.fields['req_recipient'].queryset = AccountHolder.objects.exclude(email=email)
     
     class Meta:
         model = PaymentRequest
