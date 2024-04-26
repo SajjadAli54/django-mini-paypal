@@ -28,6 +28,7 @@ def convert_currency(request):
     return JsonResponse(response_data, status=HTTP_200_OK)
 
 @transaction.atomic
+@api_view(['GET', 'POST'])
 def send_money(request: HttpRequest):
     if not request.user.is_authenticated:
         messages.error(request, "Kindly Log in first to send money!")
@@ -70,6 +71,7 @@ def send_money(request: HttpRequest):
     return render(request, "send_money.html", {'form': form})
 
 @transaction.atomic
+@api_view(['GET', 'POST'])
 def request_payment(request: HttpRequest) -> HttpResponse:
     if not request.user.is_authenticated:
         messages.error(request, "Kindly Log in first to Request Money!")
@@ -96,23 +98,33 @@ def request_payment(request: HttpRequest) -> HttpResponse:
         form = PaymentRequestForm()
     return render(request, "request_money.html", {'form': form})
 
+@api_view(['GET'])
+@transaction.atomic
 def renew_request(request: HttpRequest) -> HttpResponse:
     pk = request.GET.get("pk")
     payment_req = PaymentRequest.objects.filter(pk=pk).first()
+    if not payment_req or payment_req.status == "ACCEPTED":
+        messages.error(request, "Payment Request is already processed or Could not be found!")
+        return redirect('home')
     payment_req.status = "PENDING"
     payment_req.is_completed = False
     payment_req.save()
     return redirect('home')
 
+@api_view(['GET'])
 @transaction.atomic
 def reject_request(request: HttpRequest) -> HttpResponse:
     pk = request.GET.get("pk")
     payment_req = PaymentRequest.objects.filter(pk=pk).first()
+    if not payment_req or payment_req.status == "ACCEPTED":
+        messages.error(request, "Payment Request is already processed or Could not be found!")
+        return redirect('home')
     payment_req.status = "REJECTED"
     payment_req.is_completed = True
     payment_req.save()
     return redirect('home')
 
+@api_view(['GET'])
 @transaction.atomic
 def accept_request(request: HttpRequest)-> HttpResponse:
     pk = request.GET.get("pk")
