@@ -11,6 +11,7 @@ env/
 
 # Ignore database files
 *.sqlite3
+*.db
 
 # Ignore static files collected by Django
 /staticfiles/
