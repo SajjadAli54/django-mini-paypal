@@ -5,12 +5,16 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db import transaction
 
+from rest_framework.decorators import api_view
+
+from payapp.convert import get_exchange_rate
 from payapp.models import PaymentRequest, Transaction
 from register.models import AccountHolder
 from webapps2024.helper import get_converted_amount
 
 from .forms import SignupForm, LoginForm
 
+@api_view(["GET"])
 def index(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         email = request.user.email
@@ -45,6 +49,7 @@ def add_user_auth(form: SignupForm):
     user.save()
     return user
 
+@api_view(["GET", "POST"])
 @transaction.atomic
 def user_signup(request):
     page = "pages/signup.html"
@@ -54,6 +59,7 @@ def user_signup(request):
             holder = form.save(commit=False)
             currency = form.cleaned_data['currency']
             converted_amount = get_converted_amount(request, 'EUR', currency, 1000)
+            # converted_amount = 1000 * get_exchange_rate('EUR', currency)
             holder.balance = converted_amount
             user = add_user_auth(form)
             holder.password = user.password
