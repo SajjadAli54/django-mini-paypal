@@ -29,7 +29,7 @@ class AccountHolder(models.Model):
     last_name = models.CharField(max_length=255)
     currency = models.CharField(
         max_length=4, choices=CURRENCY, default=EURO)
-    balance = models.DecimalField(max_digits=6, decimal_places=2, default=BALANCES[DEFAULT_CURRENCY])
+    balance = models.DecimalField(max_digits=6, decimal_places=2, default=1000)
 
     def __str__(self):
         return self.email

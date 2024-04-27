@@ -1,9 +1,13 @@
 from django import forms
+from django.db.models import Q
+
 from payapp.models import PaymentRequest, Transaction
 
 from register.models import AccountHolder
 
 class SendMoneyForm(forms.ModelForm):
+    amount = forms.DecimalField(min_value=0.1)
+    
     def __init__(self, *args, **kwargs):
         email = kwargs.pop("email", None)
         super().__init__(*args, **kwargs)

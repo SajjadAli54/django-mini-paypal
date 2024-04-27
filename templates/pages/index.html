@@ -6,22 +6,10 @@
 <div class="row m-2">
         {% if user %}
         <div class="card mt-5">
-            {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field, errors in form.errors.items %}
-                    {{ field|title }}: {{ errors|join:', ' }}
-                {% endfor %}
-            </div>
-            {% endif %}
-
             <div class="card-body">
                 <div class="row">
                     {%block details %}
                         {% include 'user-details.html' with user=user %}
-                    {% endblock %}
-
-                    {% block links %}
-                        {% include "links.html" %}
                     {% endblock %}
                 </div>
 

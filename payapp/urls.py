@@ -7,6 +7,5 @@ urlpatterns = [
     path('request/', views.request_payment, name='request'),
     path('renew/', views.renew_request, name='renew'),
     path('reject/', views.reject_request, name='reject'),
-    path('accept/', views.accept_request, name='accept')
-
+    path('accept/', views.accept_request, name='accept'),
 ]
