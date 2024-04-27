@@ -15,12 +15,14 @@ CURRENCY = [
         (GBP, "British Pounds")
 ]
 class Transaction(models.Model):
-
     sender = models.ForeignKey(AccountHolder, related_name='sent_transactions', on_delete=models.PROTECT)
     recipient = models.ForeignKey(AccountHolder, related_name='received_transactions', on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=6, decimal_places=2)
     currency = models.CharField(max_length=3, choices=CURRENCY, default=EURO)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.sender} --> {self.recipient} : {self.amount} {self.currency}" 
 
 PENDING = "PENDING"
 REJECTED = "REJECTED"
@@ -41,3 +43,6 @@ class PaymentRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_completed = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=REQUEST_STATUS, default=PENDING)
+
+    def __str__(self) -> str:
+        return f"{self.req_sender} --> {self.req_recipient} : {self.amount} {self.currency}" 
