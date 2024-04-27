@@ -11,6 +11,8 @@ djangorestframework = "*"
 install = "*"
 channels = {extras = ["daphne"], version = "*"}
 celery = "*"
+django-sslserver = "*"
+django-werkzeug-debugger-runserver = "*"
 
 [dev-packages]
 

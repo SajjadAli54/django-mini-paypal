@@ -19,10 +19,10 @@ def index(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         email = request.user.email
         user = AccountHolder.objects.filter(email=email).first()
-        payments = list(Transaction.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-timestamp').all())
+        payments = list(Transaction.objects.filter(Q(sender__email=email) | Q(recipient__email=email)).order_by('-timestamp').all())
         payment_requests = list(
             PaymentRequest.objects.filter(
-                Q(req_sender=user) | Q(req_recipient=user)
+                Q(req_sender__email=email) | Q(req_recipient__email=email)
             ).order_by('-updated_at').all()
         )
         return render(request, "pages/index.html", 
